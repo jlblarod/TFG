@@ -22,7 +22,14 @@ public class PlayerHealth : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        currentHealth = maxHealth;
+        if(SaveManager.Instance != null && SaveManager.Instance.hasLoadedData)
+        {
+            currentHealth = SaveManager.Instance.data.health;
+        }
+        else
+        {
+            currentHealth = maxHealth;
+        }
         healthBar.maxValue = maxHealth;
         healthBar.value = currentHealth;
     }

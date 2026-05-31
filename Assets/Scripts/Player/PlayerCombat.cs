@@ -13,6 +13,8 @@ public class PlayerCombat : MonoBehaviour
     public float stunDuration = 0.3f;
     public float knockbackDuration = 0.15f;
 
+    private bool pendingKnockback;
+
     private void Update()
     {
         if(timeSinceLastAttack > 0f)
@@ -35,10 +37,16 @@ public class PlayerCombat : MonoBehaviour
     {
         if(timeSinceLastAttack <= 0f)
         {
+            pendingKnockback = shouldKnockback;
             animator.SetBool("isAttacking", true);
-            DealDamage(shouldKnockback);
             timeSinceLastAttack = cooldownTime;
         }
+    }
+
+    public void DealDamage()
+    {
+        DealDamage(pendingKnockback);
+        pendingKnockback = false;
     }
 
     public void DealDamage(bool shouldKnockback)

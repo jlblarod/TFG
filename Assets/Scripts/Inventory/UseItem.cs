@@ -10,7 +10,7 @@ public class UseItem : MonoBehaviour
             return;
         }
 
-        PlayerHealth playerHealth = FindObjectOfType<PlayerHealth>();
+        PlayerHealth playerHealth = FindFirstObjectByType<PlayerHealth>();
 
         if (item.currentHealth > 0 && playerHealth != null)
         {
@@ -41,7 +41,7 @@ public class UseItem : MonoBehaviour
         }
         if (item.maxHealth > 0)
         {
-            PlayerHealth playerHealth = FindObjectOfType<PlayerHealth>();
+            PlayerHealth playerHealth = FindFirstObjectByType<PlayerHealth>();
             if (playerHealth != null)
             {
                 playerHealth.maxHealth -= item.maxHealth;
