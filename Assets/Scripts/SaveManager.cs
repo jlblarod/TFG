@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.IO;
+using System.Collections;
 
 public class SaveManager : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class SaveManager : MonoBehaviour
     public string saveFile;
     public GameData data = new GameData();
     public bool hasLoadedData;
+    public static string spawnPointName = "";
 
     private void Awake()
     {
@@ -27,7 +29,33 @@ public class SaveManager : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        if (hasLoadedData)
+        {
+            player = GameObject.FindGameObjectWithTag("Player");
+            Rigidbody2D rb = player.GetComponent<Rigidbody2D>();
+            if (rb != null)
+            {
+                rb.linearVelocity = Vector2.zero;
+            }
+            StartCoroutine(ApplyDataDelayed());
+            hasLoadedData = false;
+        }
+        else
+        {
+            StartCoroutine(SaveInitialState());
+        }
+    }
+
+    IEnumerator ApplyDataDelayed()
+    {
+        yield return null;
         ApplyData();
+    }
+
+    IEnumerator SaveInitialState()
+    {
+        yield return null;
+        SaveData();
     }
 
     public void LoadData()
@@ -37,7 +65,7 @@ public class SaveManager : MonoBehaviour
             string content = File.ReadAllText(saveFile);
             data = JsonUtility.FromJson<GameData>(content);
             hasLoadedData = true;
-            UnityEngine.SceneManagement.SceneManager.LoadScene(3);
+            SceneManager.LoadScene(data.lastScene);
             Debug.Log("Data loaded. Health: " + data.health);
         }
         else
@@ -51,11 +79,49 @@ public class SaveManager : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player");
         if (player == null) return;
 
+        Transform spawnTransform = null;
+
+        string targetSpawn = !string.IsNullOrEmpty(spawnPointName) ? spawnPointName : data.lastSpawnPoint;
+
+        if (!string.IsNullOrEmpty(targetSpawn))
+        {
+            GameObject setSpawnPoint = GameObject.Find(targetSpawn);
+            if (setSpawnPoint != null && setSpawnPoint.CompareTag("Respawn"))
+            {
+                spawnTransform = setSpawnPoint.transform;
+                Debug.Log($"Using spawn point: {targetSpawn}");
+            }
+            else
+            {
+                Debug.LogWarning($"Spawn point '{targetSpawn}' not found or missing 'Respawn' tag.");
+            }
+            spawnPointName = "";
+        }
+
+        if (spawnTransform != null)
+        {
+            player.transform.position = spawnTransform.position;
+            Debug.Log($"Player moved to spawn point at {spawnTransform.position}");
+        }
+        else
+        {
+            Debug.LogWarning("No spawn point found – player position unchanged.");
+        }
+
         PlayerHealth health = player.GetComponent<PlayerHealth>();
         if (health != null)
         {
-            health.currentHealth = data.health;
-            health.healthBar.value = data.health;
+            if (PlayerHealth.isRespawning)
+            {
+                health.currentHealth = health.maxHealth;
+                PlayerHealth.isRespawning = false;
+                health.changeHealth(0);
+            }
+            else
+            {
+                health.currentHealth = data.health;
+                health.healthBar.value = data.health;
+            }
         }
 
         InventoryManager inventory = FindFirstObjectByType<InventoryManager>();
@@ -78,6 +144,8 @@ public class SaveManager : MonoBehaviour
             }
             inventory.inventorySlots[i].UpdateUI();
         }
+
+        player.GetComponent<PlayerMovement>().enabled = true;
     }
 
     public void SaveData()
@@ -91,7 +159,9 @@ public class SaveManager : MonoBehaviour
         {
             health = player.GetComponent<PlayerHealth>().currentHealth,
             gold = inventory.gold,
-            inventory = new SavedItem[inventory.inventorySlots.Length]
+            lastSpawnPoint = spawnPointName,
+            inventory = new SavedItem[inventory.inventorySlots.Length],
+            lastScene = SceneManager.GetActiveScene().buildIndex
         };
 
         for (int i = 0; i < inventory.inventorySlots.Length; i++)
@@ -103,11 +173,22 @@ public class SaveManager : MonoBehaviour
             };
         }
 
+
         string json = JsonUtility.ToJson(newData);
         File.WriteAllText(saveFile, json);
         data = newData;
         hasLoadedData = true;
         Debug.Log("Data saved. Health: " + newData.health + " Gold: " + newData.gold);
+    }
+
+    public void DeleteSaveData()
+    {
+        if (File.Exists(saveFile))
+        {
+            File.Delete(saveFile);
+        }
+
+        data = new GameData();
     }
 
     public bool HasSave() => File.Exists(saveFile);

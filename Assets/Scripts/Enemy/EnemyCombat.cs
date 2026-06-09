@@ -8,11 +8,12 @@ public class EnemyCombat : MonoBehaviour
     public float knockbackForce;
     public float stunDuration;
     public LayerMask playerLayer;
+    private EnemyHealth enemyHealth;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        enemyHealth = GetComponent<EnemyHealth>();
     }
 
     // Update is called once per frame
@@ -33,6 +34,7 @@ public class EnemyCombat : MonoBehaviour
 
     private void ApplyDamage(bool shouldKnockback)
     {
+        
         Collider2D[] hitPlayers = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, playerLayer);
         if(hitPlayers.Length > 0)
         {

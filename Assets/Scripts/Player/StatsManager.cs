@@ -1,12 +1,8 @@
 using UnityEngine;
-using TMPro;
 
 public class StatsManager : MonoBehaviour
 {
     public static StatsManager Instance;
-    //public TextMeshProUGUI healthText;
-
-    [Header("Health")]
     public int maxHealth;
     public int currentHealth;
 
@@ -25,7 +21,6 @@ public class StatsManager : MonoBehaviour
     public void UpdateMaxHealth(int amount)
     {
         maxHealth += amount;
-        //healthText.text = $"HP: {currentHealth} / {maxHealth}";
     }
     public void UpdateCurrentHealth(int amount)
     {
@@ -34,6 +29,5 @@ public class StatsManager : MonoBehaviour
         {
             currentHealth = maxHealth;
         }
-        //healthText.text = $"HP: {currentHealth} / {maxHealth}";
     }
 }

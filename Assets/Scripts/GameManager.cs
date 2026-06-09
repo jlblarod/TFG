@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class GameManager : MonoBehaviour
             instance = this;
             DontDestroyOnLoad(gameObject);
             MakePersistents();
+            SceneManager.sceneLoaded += OnSceneLoaded;
         }
         else
         {
@@ -20,6 +22,14 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (instance != this) return;
+        if (scene.name == "Menu" || scene.buildIndex == 0)
+        {
+             CleanUpAndDestroy();
+        }
+    }
     private void MakePersistents()
     {
         foreach (GameObject obj in persistents)
@@ -28,7 +38,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void CleanUpAndDestroy()
+    public void CleanUpAndDestroy()
     {
         foreach (GameObject obj in persistents)
         {

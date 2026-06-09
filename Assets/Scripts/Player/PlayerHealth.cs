@@ -5,21 +5,26 @@ public class PlayerHealth : MonoBehaviour
 {
     public int maxHealth;
     public int currentHealth;
+    public static bool isRespawning = false;
     public Slider healthBar;
 
     public void changeHealth(int amount)
     {
         currentHealth += amount;
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+
         healthBar.value = currentHealth;
+
         if(currentHealth <= 0)
         {
             currentHealth = 0;
-            gameObject.SetActive(false);
+            isRespawning = true;
+            SaveManager.Instance.hasLoadedData = true;
+            
+            UnityEngine.SceneManagement.SceneManager.LoadScene(
+                UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
         }
-        //currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
     }
-    
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         if(SaveManager.Instance != null && SaveManager.Instance.hasLoadedData)
@@ -32,11 +37,5 @@ public class PlayerHealth : MonoBehaviour
         }
         healthBar.maxValue = maxHealth;
         healthBar.value = currentHealth;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

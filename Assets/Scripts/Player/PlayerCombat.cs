@@ -1,3 +1,4 @@
+using NUnit.Framework;
 using UnityEngine;
 
 public class PlayerCombat : MonoBehaviour
@@ -9,44 +10,38 @@ public class PlayerCombat : MonoBehaviour
     public float weaponRange = 1f;
     public LayerMask enemyLayers;
     public int attackDamage = 20;
-    public float knnockbackForce = 5f;
+    public float knockbackForce = 5f;
     public float stunDuration = 0.3f;
     public float knockbackDuration = 0.15f;
 
-    private bool pendingKnockback;
+    private bool firstHitDone = false;
+    private bool secondHitDone = false;
 
     private void Update()
     {
         if(timeSinceLastAttack > 0f)
-        {
             timeSinceLastAttack -= Time.deltaTime;
-        }
     }
 
     public void Attack()
     {
-        ApplyAttack(false);
+        if (!firstHitDone && timeSinceLastAttack <= 0f)
+        {
+            firstHitDone = true;
+            animator.SetBool("isAttacking", true);
+
+            DealDamage(false);
+        }
     }
 
     public void AttackWithKnockback()
     {
-        ApplyAttack(true);
-    }
-
-    private void ApplyAttack(bool shouldKnockback)
-    {
-        if(timeSinceLastAttack <= 0f)
+        if (!secondHitDone)
         {
-            pendingKnockback = shouldKnockback;
-            animator.SetBool("isAttacking", true);
+            secondHitDone = true;
             timeSinceLastAttack = cooldownTime;
+            DealDamage(true);
         }
-    }
-
-    public void DealDamage()
-    {
-        DealDamage(pendingKnockback);
-        pendingKnockback = false;
     }
 
     public void DealDamage(bool shouldKnockback)
@@ -54,10 +49,7 @@ public class PlayerCombat : MonoBehaviour
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, weaponRange, enemyLayers);
         foreach (Collider2D enemy in hitEnemies)
         {
-            if (enemy.isTrigger)
-            {
-                continue;
-            }
+            if (enemy.isTrigger) continue;
 
             EnemyHealth enemyHealth = enemy.GetComponent<EnemyHealth>();
             if (enemyHealth != null)
@@ -69,17 +61,16 @@ public class PlayerCombat : MonoBehaviour
             {
                 EnemyKnockback enemyKnockback = enemy.GetComponent<EnemyKnockback>();
                 if (enemyKnockback != null)
-                {
-                    enemyKnockback.Knockback(transform, knnockbackForce, knockbackDuration, stunDuration);
-                }
+                    enemyKnockback.Knockback(transform, knockbackForce, knockbackDuration, stunDuration);
             }
-
             break;
         }
     }
 
     public void stopAttack()
     {
+        firstHitDone = false;
+        secondHitDone = false;
         animator.SetBool("isAttacking", false);
     }
 

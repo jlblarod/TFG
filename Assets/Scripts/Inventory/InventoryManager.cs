@@ -80,15 +80,17 @@ public class InventoryManager : MonoBehaviour
     private void DropLoot(ItemSO item, int quantity)
     {
         Loot loot = Instantiate(lootPrefab, lootSpawnPoint.position, Quaternion.identity).GetComponent<Loot>();
-        loot.Initialize(item, quantity);
+        loot.Initialize(item, quantity, false);
     }
 
     public void UserItem(InventorySlot slot)
     {
         if (slot.item != null && slot.quantity > 0)
         {
-            useItem.ApplyItemEffect(slot.item);
+            PlayerHealth playerHealth = FindFirstObjectByType<PlayerHealth>();
+            if (slot.item.currentHealth > 0 && playerHealth != null &&playerHealth.currentHealth >= playerHealth.maxHealth) return;
 
+            useItem.ApplyItemEffect(slot.item);
             slot.quantity--;
             if (slot.quantity <= 0)
             {

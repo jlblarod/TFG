@@ -21,6 +21,7 @@ public class EnemyMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        facingDirection = (int)Mathf.Sign(transform.localScale.x);
         ChangeState(EnemyState.Idle);
     }
 

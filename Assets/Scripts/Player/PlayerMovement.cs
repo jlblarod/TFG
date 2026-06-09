@@ -1,12 +1,9 @@
 using System.Collections;
-using System.Runtime.InteropServices.WindowsRuntime;
-using UnityEditor.Tilemaps;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
     public float speed = 5f;
-    public int facingDirection = 1;
     private Rigidbody2D rb; 
     float horizontal;
     float vertical;
@@ -24,10 +21,7 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Space))
-        {
-            playerCombat.Attack();
-        }
+        if(!isKnockback && Input.GetKeyDown(KeyCode.Space)) playerCombat.Attack();
     }
 
     void FixedUpdate()
@@ -53,7 +47,6 @@ public class PlayerMovement : MonoBehaviour
 
     void Flip()
     {
-        facingDirection *= -1;
         transform.localScale = new Vector3(transform.localScale.x * -1, transform.localScale.y, transform.localScale.z);
     }
 

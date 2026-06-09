@@ -15,11 +15,11 @@ public class Loot : MonoBehaviour
         UpdateSprite();
     }
 
-    public void Initialize(ItemSO item, int quantity)
+    public void Initialize(ItemSO item, int quantity, bool instantPickup = false)
     {
         this.item = item;
-        this.quantity = quantity;
-        canBePickedUp = false;
+        this.quantity = quantity;      
+        canBePickedUp = instantPickup;
         UpdateSprite();
     }
 
@@ -35,13 +35,14 @@ public class Loot : MonoBehaviour
         {
             animator.Play("LootPickup");
             OnLootPickedUp?.Invoke(item, quantity);
+            SoundManager.Instance.PlaySound2D("Item Pickup");
             Destroy(gameObject, 0.5f);
         }
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && !canBePickedUp)
         {
             canBePickedUp = true;
         }
