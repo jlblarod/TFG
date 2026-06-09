@@ -28,7 +28,7 @@ public class PauseMenu : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            print("Tab pressed");
+            if (SceneChanger.isPlayingCutscene) return;
             if (optionsMenuUI.activeSelf)
                 CloseOptions();
             else

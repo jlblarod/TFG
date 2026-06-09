@@ -5583,7 +5583,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 5
+  m_SortingOrder: 7
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7384290322352760091, guid: 68e5f647c8890f14d923857d5a489ad9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -9997,7 +9997,7 @@ Tilemap:
       - {fileID: -1291355403, guid: 642e7bde3ffef034895ebd838cf5984a, type: 3}
       - {fileID: 331494084, guid: 642e7bde3ffef034895ebd838cf5984a, type: 3}
       - {fileID: 468761516, guid: 642e7bde3ffef034895ebd838cf5984a, type: 3}
-      m_AnimationSpeed: 5
+      m_AnimationSpeed: 5.0000005
       m_AnimationTimeOffset: 0
       m_Flags: 0
   - first: {x: 4, y: -4, z: 0}
@@ -22722,6 +22722,8 @@ MonoBehaviour:
     health: 0
     gold: 0
     inventory: []
+    lastSpawnPoint: 
+    lastScene: 0
   hasLoadedData: 0
 --- !u!4 &1689548776
 Transform:

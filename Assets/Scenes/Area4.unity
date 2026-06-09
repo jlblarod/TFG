@@ -11674,10 +11674,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: -0.46679688
+    x: 0.013671875
     y: 0
     width: 1.25
-    height: 0.8046875
+    height: 0.43359375
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 34
@@ -12721,6 +12721,8 @@ MonoBehaviour:
     health: 0
     gold: 0
     inventory: []
+    lastSpawnPoint: 
+    lastScene: 0
   hasLoadedData: 0
 --- !u!4 &1536882854
 Transform:
@@ -13092,7 +13094,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 5
+  m_SortingOrder: 7
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7384290322352760091, guid: 68e5f647c8890f14d923857d5a489ad9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

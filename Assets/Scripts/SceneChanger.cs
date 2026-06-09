@@ -13,6 +13,7 @@ public class SceneChanger : MonoBehaviour
     public TextMeshProUGUI bossIntroText;
     public GameObject creditsCanvas;
     public TextMeshProUGUI creditsText;
+    public static bool isPlayingCutscene = false;
     
 
     public bool isBossIntro = false;
@@ -63,8 +64,9 @@ public class SceneChanger : MonoBehaviour
         if (collision.gameObject.tag == "Player")
         {
             collision.GetComponent<PlayerMovement>().enabled = false;
-            transition.Play("FadeToBlack");
+            SaveManager.Instance.SaveData();
             SaveManager.spawnPointName = spawnPointName;
+            transition.Play("FadeToBlack");
             StartCoroutine(DelayFade());
         }
     }
@@ -83,6 +85,10 @@ public class SceneChanger : MonoBehaviour
 
     IEnumerator PlayBossIntro()
     {
+        isPlayingCutscene = true;
+
+        MusicManager.Instance.PlayMusic("Boss");
+
         bossIntroCanvas.SetActive(true);
 
         foreach (string line in introLines)
@@ -92,8 +98,8 @@ public class SceneChanger : MonoBehaviour
         }
 
         yield return new WaitForSeconds(1f);
-
         bossIntroCanvas.SetActive(false);
+        isPlayingCutscene = false;
     }
 
     public void StartEndGameSequence()
@@ -126,6 +132,7 @@ public class SceneChanger : MonoBehaviour
 
     IEnumerator PlayCredits()
     {
+        isPlayingCutscene = true;
         creditsCanvas.SetActive(true);    
         creditsText.gameObject.SetActive(true);
 
@@ -136,8 +143,7 @@ public class SceneChanger : MonoBehaviour
         }
 
         yield return new WaitForSeconds(1f);
-
         creditsCanvas.SetActive(false);
+        isPlayingCutscene = false;
     }
 }
- 

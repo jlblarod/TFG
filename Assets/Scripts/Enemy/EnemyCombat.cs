@@ -16,12 +16,6 @@ public class EnemyCombat : MonoBehaviour
         enemyHealth = GetComponent<EnemyHealth>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public void Attack()
     {
         ApplyDamage(false);
@@ -35,13 +29,13 @@ public class EnemyCombat : MonoBehaviour
     private void ApplyDamage(bool shouldKnockback)
     {
         
-        Collider2D[] hitPlayers = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, playerLayer);
-        if(hitPlayers.Length > 0)
+        Collider2D hitPlayer = Physics2D.OverlapCircle(attackPoint.position, attackRange, playerLayer);
+        if(hitPlayer != null)
         {
-            hitPlayers[0].GetComponent<PlayerHealth>().changeHealth(-damage);
+            hitPlayer.GetComponent<PlayerHealth>().changeHealth(-damage);
             if (shouldKnockback)
             {
-                hitPlayers[0].GetComponent<PlayerMovement>().Knockback(transform, knockbackForce, stunDuration);
+                hitPlayer.GetComponent<PlayerMovement>().Knockback(transform, knockbackForce, stunDuration);
             }
         }
     }

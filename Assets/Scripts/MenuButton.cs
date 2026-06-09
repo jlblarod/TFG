@@ -21,6 +21,5 @@ public class MenuButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     public void OnPointerUp(PointerEventData e)
     {
         text.rectTransform.offsetMin = new Vector2(text.rectTransform.offsetMin.x, 7);
-        //EventSystem.current.SetSelectedGameObject(null);
     }
 }

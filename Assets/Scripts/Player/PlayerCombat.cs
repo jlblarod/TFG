@@ -63,7 +63,6 @@ public class PlayerCombat : MonoBehaviour
                 if (enemyKnockback != null)
                     enemyKnockback.Knockback(transform, knockbackForce, knockbackDuration, stunDuration);
             }
-            break;
         }
     }
 

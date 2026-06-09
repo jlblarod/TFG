@@ -31,12 +31,6 @@ public class SaveManager : MonoBehaviour
     {
         if (hasLoadedData)
         {
-            player = GameObject.FindGameObjectWithTag("Player");
-            Rigidbody2D rb = player.GetComponent<Rigidbody2D>();
-            if (rb != null)
-            {
-                rb.linearVelocity = Vector2.zero;
-            }
             StartCoroutine(ApplyDataDelayed());
             hasLoadedData = false;
         }
@@ -64,6 +58,7 @@ public class SaveManager : MonoBehaviour
         {
             string content = File.ReadAllText(saveFile);
             data = JsonUtility.FromJson<GameData>(content);
+            spawnPointName = data.lastSpawnPoint;
             hasLoadedData = true;
             SceneManager.LoadScene(data.lastScene);
             Debug.Log("Data loaded. Health: " + data.health);
@@ -78,35 +73,33 @@ public class SaveManager : MonoBehaviour
     {
         player = GameObject.FindGameObjectWithTag("Player");
         if (player == null) return;
-
         Transform spawnTransform = null;
 
-        string targetSpawn = !string.IsNullOrEmpty(spawnPointName) ? spawnPointName : data.lastSpawnPoint;
-
-        if (!string.IsNullOrEmpty(targetSpawn))
+        if (!string.IsNullOrEmpty(spawnPointName))
         {
-            GameObject setSpawnPoint = GameObject.Find(targetSpawn);
-            if (setSpawnPoint != null && setSpawnPoint.CompareTag("Respawn"))
+            GameObject specific = GameObject.Find(spawnPointName);
+            if (specific != null && specific.CompareTag("Respawn"))
             {
-                spawnTransform = setSpawnPoint.transform;
-                Debug.Log($"Using spawn point: {targetSpawn}");
+                spawnTransform = specific.transform;
+                Debug.Log($"Using named spawn point: {spawnPointName}");
             }
             else
             {
-                Debug.LogWarning($"Spawn point '{targetSpawn}' not found or missing 'Respawn' tag.");
+                Debug.LogWarning($"Named spawn point '{spawnPointName}' not found or missing 'Respawn' tag.");
             }
-            spawnPointName = "";
+        }
+
+        if (spawnTransform == null)
+        {
+            GameObject fallback = GameObject.FindGameObjectWithTag("Respawn");
+            if (fallback != null)
+                spawnTransform = fallback.transform;
         }
 
         if (spawnTransform != null)
-        {
             player.transform.position = spawnTransform.position;
-            Debug.Log($"Player moved to spawn point at {spawnTransform.position}");
-        }
         else
-        {
             Debug.LogWarning("No spawn point found – player position unchanged.");
-        }
 
         PlayerHealth health = player.GetComponent<PlayerHealth>();
         if (health != null)
@@ -146,6 +139,7 @@ public class SaveManager : MonoBehaviour
         }
 
         player.GetComponent<PlayerMovement>().enabled = true;
+        SaveData();
     }
 
     public void SaveData()
@@ -159,9 +153,9 @@ public class SaveManager : MonoBehaviour
         {
             health = player.GetComponent<PlayerHealth>().currentHealth,
             gold = inventory.gold,
-            lastSpawnPoint = spawnPointName,
             inventory = new SavedItem[inventory.inventorySlots.Length],
-            lastScene = SceneManager.GetActiveScene().buildIndex
+            lastScene = SceneManager.GetActiveScene().buildIndex,
+            lastSpawnPoint = spawnPointName
         };
 
         for (int i = 0; i < inventory.inventorySlots.Length; i++)
@@ -173,7 +167,6 @@ public class SaveManager : MonoBehaviour
             };
         }
 
-
         string json = JsonUtility.ToJson(newData);
         File.WriteAllText(saveFile, json);
         data = newData;
@@ -183,12 +176,9 @@ public class SaveManager : MonoBehaviour
 
     public void DeleteSaveData()
     {
-        if (File.Exists(saveFile))
-        {
-            File.Delete(saveFile);
-        }
-
+        if (File.Exists(saveFile)) File.Delete(saveFile);
         data = new GameData();
+        hasLoadedData = false;
     }
 
     public bool HasSave() => File.Exists(saveFile);

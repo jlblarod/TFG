@@ -120,7 +120,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 5
+  m_SortingOrder: 6
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7384290322352760091, guid: 8e282e69634fc4943847cd65519ea38c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -311,6 +311,7 @@ MonoBehaviour:
   isBoss: 1
   itemDrop: {fileID: 0}
   lootPrefab: {fileID: 0}
+  sceneChanger: {fileID: 0}
 --- !u!114 &7151423270788321741
 MonoBehaviour:
   m_ObjectHideFlags: 0
