@@ -78,10 +78,10 @@ public class PauseMenu : MonoBehaviour
     }
 
     public void UpdateMusicVolume(float volume)
-{
-    bool result = audioMixer.SetFloat("MusicVolume", volume);
-    savedMusicVolume = volume;
-}
+    {
+        bool result = audioMixer.SetFloat("MusicVolume", volume);
+        savedMusicVolume = volume;
+    }
 
     public void UpdateSoundVolume(float volume)
     {

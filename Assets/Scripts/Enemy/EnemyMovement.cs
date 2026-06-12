@@ -62,30 +62,30 @@ public class EnemyMovement : MonoBehaviour
     }
 
     private void CheckForPlayer()
- {
-     Collider2D hits = Physics2D.OverlapCircle(detectionPoint.position, detectionRange, playerLayer);
+    {
+        Collider2D hits = Physics2D.OverlapCircle(detectionPoint.position, detectionRange, playerLayer);
 
-     if (hits is not null)
-     {
-         player = hits.transform;
+        if (hits != null)
+        {
+            player = hits.transform;
 
-         if (Vector2.Distance(transform.position, player.position) <= attackRange && attackTimer <= 0)
-         {
-             attackTimer = attackCooldown;
-             ChangeState(EnemyState.Attacking);
-         }
+            if (Vector2.Distance(transform.position, player.position) <= attackRange && attackTimer <= 0)
+            {
+                attackTimer = attackCooldown;
+                ChangeState(EnemyState.Attacking);
+            }
 
-         else if (Vector2.Distance(transform.position, player.position) >= attackRange && enemyState != EnemyState.Attacking)
-         {
-             ChangeState(EnemyState.Chasing);
-         }
-     }
-     else
-     {
-         rb.linearVelocity = Vector2.zero;
-         ChangeState(EnemyState.Idle);
-     }
- }
+            else if (Vector2.Distance(transform.position, player.position) >= attackRange && enemyState != EnemyState.Attacking)
+            {
+                ChangeState(EnemyState.Chasing);
+            }
+        }
+        else
+        {
+            rb.linearVelocity = Vector2.zero;
+            ChangeState(EnemyState.Idle);
+        }
+    }
 
     public void ChangeState(EnemyState newState)
     {
